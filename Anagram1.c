@@ -1,12 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include <ctype.h>
+#include<ctype.h>
 #include<math.h>
+#include<time.h>
 
-#define maxWordSize 80
+#define maxWordSize 70
 #define dictSize 236000
 //#define alphanumber 26
+
+
 struct word
 {
   char vocab[maxWordSize];
@@ -19,6 +22,8 @@ struct ansArr
   double value;
   struct ansArr *next;
 };
+
+//char letterFrequency[] = "eothasinrdluymwfgcbpkvjqxz";
 int reference[26] = {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
 struct word wordTable[dictSize];
 void buildTable(char* buf,int count)
@@ -62,9 +67,8 @@ void searchForAna(char* a, struct ansArr* answer, int dicNum, int* found)
     {
       char searchW[maxWordSize];
       strcpy(searchW, wordTable[i].vocab);
-      //printf("searchW is %s\n", searchW);
-      if(strcmp(searchW, a)==0) continue; // if they are the same word
-      else if(*found == 0)
+      //if(strcmp(searchW, a)==0) continue; // if they are the same word
+      if(*found == 0)
       {
         *found = 1;
         strcpy(maxVal->str, searchW);
@@ -105,6 +109,8 @@ void searchForAna(char* a, struct ansArr* answer, int dicNum, int* found)
 
 int main(int argc, char* argv[])
 {
+    clock_t begin, end;
+    double timeSpent;
     if (argc <= 1) {printf("please input vocabulary.\n"); return -1;}
     int i;
     char * ana = malloc(sizeof(char)*maxWordSize) ;
@@ -132,11 +138,12 @@ int main(int argc, char* argv[])
     fclose(fp);
     //printf("number of vocabulary in wordTable is %d\n",count);
     //sortWords();
-
-    int* find;
-    searchForAna(ana, answer, count,find);
-    //printf("word 23 is %s\n",(wordTable[23].vocab));
-    //printf("the number of word 23 is %f\n",wordTable[23].number);
+    begin = clock();
+    int* find = malloc(sizeof(int));
+    searchForAna(ana, answer, count, find);
+    end = clock();
+    timeSpent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("the time for searching is %f\n",timeSpent);
     if (*find == 0) printf("no match\n");
     else
     {
@@ -145,5 +152,6 @@ int main(int argc, char* argv[])
         answer = answer->next;
       }while(answer!=NULL);
     }
+
     return 0;
 }

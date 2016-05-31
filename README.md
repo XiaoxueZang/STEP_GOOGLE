@@ -1,2 +1,6 @@
-# STEP_GOOGLE
-assignment of google step program
+first hw
+Example:
+
+input:            output:
+repaint -> painter; pertain; pterian;
+Moon Starer -> astronomer
