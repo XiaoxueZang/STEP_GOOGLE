@@ -36,12 +36,17 @@ combination = list(set(combination))
 combination.sort(key = len, reverse = True)
 
 find = False
+
+
 for my_str in combination:
     if my_str in dictionary.keys():
-        find = True
-        end = time.time()
-        print('time for search is %f.'%(end-start))
+        if not find:
+            max_length=len(my_str)
+            find = True
+        if len(my_str)<max_length:
+            end = time.time()
+            break
         print("the anagram is %s"%dictionary[my_str])
-        break
+print('time for search is %f.'%(end-start))
 if not find:
     print('no match')
