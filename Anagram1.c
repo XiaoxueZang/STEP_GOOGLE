@@ -7,7 +7,6 @@
 
 #define maxWordSize 70
 #define dictSize 236000
-//#define alphanumber 26
 
 
 struct word
@@ -23,8 +22,10 @@ struct ansArr
   struct ansArr *next;
 };
 
-//char letterFrequency[] = "eothasinrdluymwfgcbpkvjqxz";
-int reference[26] = {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
+/*char letterFrequency[] = "eothasinrdluymwfgcbpkvjqxz";
+abcdefghijklmn
+could set the prime number from small to big in this sequence to reduce the caluculation and memory*/
+int reference[26] = {2,41,5,7,11,43,17,19,23,29,31,37,3,13,47,53,59,61,67,71,73,79,83,89,97,101};
 struct word wordTable[dictSize];
 void buildTable(char* buf,int count)
 {
@@ -49,17 +50,17 @@ void searchForAna(char* a, struct ansArr* answer, int dicNum, int* found)
   *found = 0;
   double aNum = 1;
   struct ansArr* maxVal = answer;
-  //maxVal->next = malloc(sizeof(struct ansArr));
+
   maxVal->next = NULL;
   maxVal->strLen = 0;
-  //int max = 0;
-  //char wordFound[maxWordSize];
+
   while ((c = *(a + len)) != '\0')
   {
-    aNum *= reference[tolower(c)-'a'];
+    aNum *= reference[tolower(c) -'a'];
     len++;
   }
-  //printf("aNum is %f\n",aNum);
+  //printf("the number is %f\n", aNum);
+  //printf("the word is %s\n", a);
   for (i=0; i<dicNum; i++)
   {
     if (fmod(aNum,(wordTable[i].number)) != 0) continue;
@@ -67,25 +68,26 @@ void searchForAna(char* a, struct ansArr* answer, int dicNum, int* found)
     {
       char searchW[maxWordSize];
       strcpy(searchW, wordTable[i].vocab);
+      int searchWlength = strlen(searchW);
+
       //if(strcmp(searchW, a)==0) continue; // if they are the same word
       if(*found == 0)
       {
         *found = 1;
         strcpy(maxVal->str, searchW);
-        maxVal->strLen = strlen(searchW);
-        //maxVal->next = NULL;
+        maxVal->strLen = searchWlength;
       }
       else
       {
-        //printf("inside second else\n");
-        if((maxVal->strLen)>strlen(searchW)) continue;
-        else if ((maxVal->strLen)<strlen(searchW))
+        if((maxVal->strLen)>searchWlength) {continue;}
+
+        else if ((maxVal->strLen)<searchWlength)
         {
           strcpy(maxVal->str, searchW);
-          maxVal->strLen = strlen(searchW);
-          maxVal->next = NULL;//malloc(sizeof(struct ansArr));
+          maxVal->strLen = searchWlength;
+          maxVal->next = NULL;
         }
-        else if ((maxVal->strLen) == strlen(searchW))
+        else if ((maxVal->strLen) == searchWlength)
         {
           struct ansArr* temp = malloc(sizeof(struct ansArr));
           temp = maxVal;
@@ -95,16 +97,12 @@ void searchForAna(char* a, struct ansArr* answer, int dicNum, int* found)
           temp->next = malloc(sizeof(struct ansArr));
           struct ansArr* nextAns = temp->next;
           strcpy(nextAns->str, searchW);
-          nextAns->strLen = strlen(searchW);
-          nextAns->next = NULL;//malloc(sizeof(struct ansArr));
+          nextAns->strLen = searchWlength;
+          nextAns->next = NULL;
         }
       }
     }
   }
-  //len = strlen(wordFound);
-  //for (i = 0;i<len;i++){
-  //  *(answer + i) = wordFound[i];
-  //}
 }
 
 int main(int argc, char* argv[])
@@ -115,11 +113,9 @@ int main(int argc, char* argv[])
     int i;
     char * ana = malloc(sizeof(char)*maxWordSize) ;
     ana[0]='\0';
-    //printf("argc is %d\n",argc);
     for (i = 1; i < argc; i++){
         strcat(ana, argv[i]);
     }
-    //printf("the input is %s\n",ana);
     struct ansArr* answer = malloc(sizeof(struct ansArr));
 
     char* fileName = "dictionary.txt";
@@ -136,8 +132,7 @@ int main(int argc, char* argv[])
         count++;
     }
     fclose(fp);
-    //printf("number of vocabulary in wordTable is %d\n",count);
-    //sortWords();
+
     begin = clock();
     int* find = malloc(sizeof(int));
     searchForAna(ana, answer, count, find);

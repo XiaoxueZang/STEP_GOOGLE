@@ -20,18 +20,16 @@ for line in lines:
 word = input("Please enter the word: ")
 #start = time.time()
 my_list = word.lower().split(' ')
-#my_str = ''.join(my_list)
 my_list = list(''.join(my_list))
 my_list.sort()
 my_str = ''.join(my_list)
-#print(my_str)
 start = time.time()
 combination = []
 word_length = len(my_str)
 get_bin = lambda x: ('{0:0'+str(word_length)+'b}').format(x)
 for x in range(1,2**word_length):
     mask = [int(i) for i in get_bin(x)]
-    mask =[bool(i) for i in mask]
+    mask = [bool(i) for i in mask]
     combination.append(''.join([i*j for (i,j) in zip(mask, my_list)]))
 
 combination = list(set(combination))
